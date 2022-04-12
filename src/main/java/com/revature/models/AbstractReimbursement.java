@@ -40,45 +40,25 @@ public class AbstractReimbursement {
         this.amount = amount;
     }
 
-    public int getId() {
-        return id;
-    }
+    public int getId() {return id;}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public void setId(int id) {this.id = id;}
 
-    public Status getStatus() {
-        return status;
-    }
+    public Status getStatus() {return status;}
 
-    public void setStatus(Status status) {
-        this.status = status;
-    }
+    public void setStatus(Status status) {this.status = status;}
 
-    public User getAuthor() {
-        return author;
-    }
+    public User getAuthor() {return author;}
 
-    public void setAuthor(User author) {
-        this.author = author;
-    }
+    public void setAuthor(User author) {this.author = author;}
 
-    public User getResolver() {
-        return resolver;
-    }
+    public User getResolver() {return resolver;}
 
-    public void setResolver(User resolver) {
-        this.resolver = resolver;
-    }
+    public void setResolver(User resolver) {this.resolver = resolver;}
 
-    public double getAmount() {
-        return amount;
-    }
+    public double getAmount() {return amount;}
 
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
+    public void setAmount(double amount) {this.amount = amount;}
 
     @Override
     public boolean equals(Object o) {

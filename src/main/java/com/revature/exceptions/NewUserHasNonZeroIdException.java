@@ -22,3 +22,4 @@ public class NewUserHasNonZeroIdException extends RuntimeException {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }
+
