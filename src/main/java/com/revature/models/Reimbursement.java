@@ -1,29 +1,62 @@
 package com.revature.models;
 
-/**
- * This concrete Reimbursement class can include additional fields that can be used for
- * extended functionality of the ERS application.
- *
- * Example fields:
- * <ul>
- *     <li>Description</li>
- *     <li>Creation Date</li>
- *     <li>Resolution Date</li>
- *     <li>Receipt Image</li>
- * </ul>
- *
- */
-public class Reimbursement extends AbstractReimbursement {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-    public Reimbursement() {
-        super();
+@JsonIgnoreProperties
+public class Reimbursement {
+    private int id;
+    private String type;
+    private String status;
+    private String description;
+    private int userID;
+
+    public Reimbursement() {}
+
+    public Reimbursement(String type, String status, String description, int userID) {
+        this.type = type;
+        this.status = status;
+        this.description = description;
+        this.userID = userID;
     }
 
-    /**
-     * This includes the minimum parameters needed for the {@link com.revature.models.AbstractReimbursement} class.
-     * If other fields are needed, please create additional constructors.
-     */
-    public Reimbursement(int id, Status status, User author, User resolver, double amount) {
-        super(id, status, author, resolver, amount);
+    public String getType() {
+        return type;
     }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getUserID() {
+        return userID;
+    }
+
+    public void setUserID(int userID) {
+        this.userID = userID;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
 }

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to ERS</title>
+</head>
+
+<body>
+    <p id="pageContent"><!-- Our inserted content will go here --></p>
+
+    <!-- This imports a script file, in this case it imports the exported scripts from that file -->
+    <script src="./scripts/userConnection.js"></script>
+    <script>
+
+        //First we grab the authToken from localStorage where we left it at login/register
+        let authorizedUser = localStorage.getItem("username");
+        console.log("authorizedUser: ", authorizedUser);//fact finding
+
+        /*
+        This is a self-invoking function, also known as IIFE, imediately invoked 
+        function expression. To build one, wrap the function declaration in ()
+        then add another pair of () at the end to act as the parameter list. Effectively
+        as soon as the function is defined it is called.
+        */
+        (async function displayUser() {
+            /*
+            Now we make an API call to get our user data. The backend checks against the registered
+            users for matching username, and returns the rest of the user object.
+            */
+            let response = await getUser(localStorage.getItem("username"));
+            let json = await response.json();
+            console.log("Response: ", response);//more fact finding
+            console.log("Response JSON: ", json);//we should probably remove these later
+
+            /*
+            Now we do DOM manipulation. We get the paragraph element in the HTML above
+            and append some HTML to it. This changes the DOM, and thus the browser renders 
+            the new view.
+            */
+            let paragraph = document.getElementById("pageContent");
+            paragraph.innerHTML += "<h1>Welcome, "
+                + json.firstName
+                + "</h1><br>"
+                + json.lastName + ", " + json.firstName
+                + "<br> username: " + json.username
+                + "<br> email: " + json.email
+                + "<br> unique user id:" + json.id
+        })(); //IIFE - Imediately Invoked Function Expression - self-invoking function.
+    </script>
+
+    <button type="button" onclick="submitRequest()">Submit a request</button>
+    <button type="button" onclick="alert('Hello world!')">Cancel a request</button>
+    <button type="button" onclick="alert('Hello world!')">View your requests</button>
+    <button type="button" onclick="alert('Hello world!')">Edit a request</button>
+
+
+    <script src="./scripts/reimbursementConnection.js"></script>
+    <script>
+        async function submitRequest() {
+            let status = "Pending";
+            let type = prompt("Press 1 for lodging, 2 for food, 3 for travel");
+
+            if(type == 1){
+                type = "Lodging";
+            }
+            else if(type == 2){
+                type = "Food";
+            }
+            else if(type == 3){
+                type = "Travel";
+            }
+            
+            let description = prompt("Enter your description");
+
+            let response = await getUser(localStorage.getItem("username"));
+            let json = await response.json();
+            let id = json.id;
+
+
+            newReimbursement =  {
+                status: status,
+                type: type,
+                description: description,
+                userID: id
+            }
+
+            console.log(newReimbursement);
+            let r = await fetch(
+                "http://localhost:8080/Simpleservlets/Reimbursement",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "status": status,
+                        "type": type,
+                        "description": description,
+                        "userID": id
+                    },
+                body: JSON.stringify(newReimbursement)
+                }
+            );
+
+            window.alert("test");
+        }
+    </script>
+
+</body>
+
+</html>
