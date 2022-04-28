@@ -12,11 +12,13 @@
     <p id="pageContent"><!-- Our inserted content will go here --></p>
 
     <!-- This imports a script file, in this case it imports the exported scripts from that file -->
+    <script src="./scripts/reimbursementConnection.js"></script>
     <script src="./scripts/userConnection.js"></script>
+
     <script>
 
         //First we grab the authToken from localStorage where we left it at login/register
-        let authorizedUser = localStorage.getItem("authToken");
+        let authorizedUser = sessionStorage.getItem("username");
         console.log("authorizedUser: ", authorizedUser);//fact finding
 
         /*
@@ -49,6 +51,43 @@
                 + "<br> email: " + json.email
         })(); //IIFE - Imediately Invoked Function Expression - self-invoking function.
     </script>
+
+    <button type="button" onclick="viewAllReqs()">View all reimbursement requests</button>
+    <button type="button" onclick="viewByStatus()">Filter requests by status</button>
+    <button type="button" onclick="window.location.href='./users.html'">View all users</button>
+    <button type="button" onclick="logout()">Log out</button>
+
+
+    <script>
+        async function viewAllReqs() {
+            sessionStorage.setItem("reqfilter", "All");
+            window.location.href = "./reimbursements.html";
+        }
+
+        async function viewByStatus(){
+            let status = prompt("Press 1 to view pending requests, press 2 to view approved requests, press 3 to view denied requests");
+
+            if(status == 1){
+                status = "Pending";
+            }
+            else if(status == 2){
+                status = "Approved";
+            }
+            else if (status == 3){
+                status = "Denied";
+            }
+
+            sessionStorage.setItem("reqfilter", status);
+            window.location.href = "./reimbursements.html";
+        }
+
+        async function logout(){
+            sessionStorage.clear();
+            window.location.href= "./login.html";
+        }
+
+    </script>
+
 </body>
 
 </html>

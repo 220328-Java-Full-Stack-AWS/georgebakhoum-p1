@@ -24,11 +24,51 @@ public class ReimbursementServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<Reimbursement> model = service.viewRequestsUser(Integer.parseInt(req.getHeader("user_id")));
-        String json = rwjson.writeValueAsString(model);
-        resp.setContentType("application/json");
-        resp.getWriter().print(json);
-        resp.setStatus(200);
+        if (req.getHeader("mode").equals("user")){
+            List<Reimbursement> model = service.viewRequestsUser(Integer.parseInt(req.getHeader("user_id")));
+            String json = rwjson.writeValueAsString(model);
+            resp.setContentType("application/json");
+            resp.getWriter().print(json);
+            if (model.isEmpty()) {
+                resp.setStatus(204);
+            } else {
+                resp.setStatus(200);
+            }
+        } else if (req.getHeader("mode").equals("id")){
+            if(service.find(Integer.parseInt(req.getHeader("user_id")), Integer.parseInt(req.getHeader("req_id")))) {
+                Reimbursement model = service.read(Integer.parseInt(req.getHeader("req_id")));
+                String json = rwjson.writeValueAsString(model);
+                resp.setContentType("application/json");
+                resp.getWriter().print(json);
+                resp.setStatus(200);
+            }
+            else{
+                resp.setStatus(412);
+            }
+        } else if (req.getHeader("mode").equals("status")){
+            List<Reimbursement> model = service.viewRequestsAdmin(req.getHeader("status"));
+
+            if (model.isEmpty()) {
+                resp.setStatus(204);
+            } else {
+                String json = rwjson.writeValueAsString(model);
+                resp.setContentType("application/json");
+                resp.getWriter().print(json);
+                resp.setStatus(200);
+            }
+        } else if (req.getHeader("mode").equals("admin")){
+            Reimbursement model = service.read(Integer.parseInt(req.getHeader("req_id")));
+
+            if(!(model.equals(null))) {
+                String json = rwjson.writeValueAsString(model);
+                resp.setContentType("application/json");
+                resp.getWriter().print(json);
+                resp.setStatus(200);
+            }
+            else {
+                resp.setStatus(204);
+            }
+        }
     }
 
     @Override
@@ -51,7 +91,11 @@ public class ReimbursementServlet extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //service.cancelRequest(Integer.parseInt(req.getHeader("user_id")), Integer.parseInt(req.getHeader("req_id")));
-        resp.setStatus(200);
+        if(service.find(Integer.parseInt(req.getHeader("user_id")), Integer.parseInt(req.getHeader("req_id")))) {
+            service.delete(Integer.parseInt(req.getHeader("req_id")));
+            resp.setStatus(200);
+        } else{
+            resp.setStatus(412);
+        }
     }
 }

@@ -18,13 +18,60 @@ async function newReimbursement(newReimbursement) {
     return response;
 }
 
+async function getReimbursementStatus(s) {
+    let response = await fetch(
+        reimbursementResourceURL,
+        {
+            method: "GET",
+            headers: {
+                "mode": "status",
+                "status": s
+            }
+        }
+    );
+
+    return response;
+}
+
+async function getReimbursementsUser(id) {
+    let response = await fetch(
+        reimbursementResourceURL,
+        {
+            method: "GET",
+            headers: {
+                "mode": "user",
+                "user_id": id
+            }
+        }
+    );
+
+    return response;
+}
+
 async function getReimbursement(id) {
     let response = await fetch(
         reimbursementResourceURL,
         {
             method: "GET",
             headers: {
-                reimbursementId: id
+                "mode": "id",
+                "req_id": id.req,
+                "user_id": id.user
+            }
+        }
+    );
+
+    return response;
+}
+
+async function getReimbursementAdmin(id) {
+    let response = await fetch(
+        reimbursementResourceURL,
+        {
+            method: "GET",
+            headers: {
+                "mode": "admin",
+                "req_id": id
             }
         }
     );
@@ -53,7 +100,9 @@ async function deleteReimbursement(reimbursement) {
         {
             method: "DELETE",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "req_id": reimbursement.req_id,
+                "user_id": reimbursement.user_id
             },
             body: JSON.stringify(reimbursement)
         }

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 
 public class UserServlet extends HttpServlet {
     private UserService service;
@@ -28,14 +29,30 @@ public class UserServlet extends HttpServlet {
 
         if(req.getHeader("mode").equals("getByUsername")){
             model = service.getByUsername(req.getHeader("username"));
+        } else if (req.getHeader("mode").equals("allUsers")) {
+            List<User> list = service.getAll();
+
+            if(list.isEmpty()){
+                resp.setStatus(204);
+            } else {
+                String json = rwjson.writeValueAsString(list);
+                resp.setContentType("application/json");
+                resp.getWriter().print(json);
+                resp.setStatus(200);
+            }
+            return;
         } else {
             model = service.read(Integer.parseInt(req.getHeader("user_id")));
         }
 
-        String json = rwjson.writeValueAsString(model);
-        resp.setContentType("application/json");
-        resp.getWriter().print(json);
-        resp.setStatus(200);
+        if(model.equals(null)){
+            resp.setStatus(204);
+        } else {
+            String json = rwjson.writeValueAsString(model);
+            resp.setContentType("application/json");
+            resp.getWriter().print(json);
+            resp.setStatus(200);
+        }
     }
 
     @Override

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to ERS</title>
+</head>
+
+<body>
+    <p id="pageContent"><!-- Our inserted content will go here --></p>
+
+    <!-- This imports a script file, in this case it imports the exported scripts from that file -->
+    <script src="./scripts/reimbursementConnection.js"></script>
+    <script>
+
+        //First we grab the authToken from localStorage where we left it at login/register
+        let filter = sessionStorage.getItem("reqfilter");
+        console.log("Filter: ", filter);//fact finding
+
+        /*
+        This is a self-invoking function, also known as IIFE, imediately invoked 
+        function expression. To build one, wrap the function declaration in ()
+        then add another pair of () at the end to act as the parameter list. Effectively
+        as soon as the function is defined it is called.
+        */
+        (async function displayRequests() {
+            /*
+            Now we make an API call to get our user data. The backend checks against the registered
+            users for matching username, and returns the rest of the user object.
+            */
+            let response = await getReimbursementStatus(filter);
+
+            let paragraph = document.getElementById("pageContent");
+            paragraph.innerHTML += "<h1>Reimbursement Requests</h1><br>";
+
+            if(response.status == 200){
+                let json = await response.json();
+                console.log("Response: ", response);//more fact finding
+                console.log("Response JSON: ", json);//we should probably remove these later
+
+                for(let i = 0; i < json.length; i++){
+                        paragraph.innerHTML += "<b>Reimbursement Request ID: "
+                            + json[i].id + "</b><br>Status: "
+                            + json[i].status + "<br>Type: "
+                            + json[i].type + "<br>Description: "
+                            + json[i].description + "<br><br>";
+                    }
+            }
+            else {
+                paragraph.innerHTML += "No reimbursement requests to display<br>";
+            }
+        })(); //IIFE - Imediately Invoked Function Expression - self-invoking function.
+    </script>
+
+    <button type="button" onclick="changeFilter()">Change status filter</button>
+    <button type="button" onclick="approveReq()">Approve a request</button>
+    <button type="button" onclick="denyReq()">Deny a request</button>
+    <button type="button" onclick="window.location.href='./pageAdmin.html'">Go back to previous page</button>
+
+    <script>
+        async function changeFilter() {
+            let status = prompt("Press 1 to view pending requests, press 2 to view approved requests, press 3 to view denied requests, press 4 to view all");
+
+            if(status == 1){
+                status = "Pending";
+            }
+            else if(status == 2){
+                status = "Approved";
+            }
+            else if (status == 3){
+                status = "Denied";
+            } else {
+                status = "All";
+            }
+
+            sessionStorage.setItem("reqfilter", status);
+            window.location.href = "./reimbursements.html";
+        }
+
+        async function approveReq() {
+            let reqid = prompt("Enter the request ID you want to approve");
+
+            let rep = await getReimbursementAdmin(reqid);
+
+            if(rep.status == 200){
+                let json = await rep.json();
+
+                let change = {
+                        status: "Approved",
+                        type: json.type,
+                        description: json.description,
+                        userID: json.userID,
+                        id: reqid
+                    }
+                
+                updateReimbursement(change);
+                window.location.href = "./reimbursements.html";
+            } else {
+                window.alert("Invalid request ID");
+            }
+        }
+
+        async function denyReq() {
+            let reqid = prompt("Enter the request ID you want to deny");
+
+            let rep = await getReimbursementAdmin(reqid);
+
+            if(rep.status == 200){
+                let json = await rep.json();
+
+                let change = {
+                        status: "Denied",
+                        type: json.type,
+                        description: json.description,
+                        userID: json.userID,
+                        id: reqid
+                    }
+                
+                updateReimbursement(change);
+                window.location.href = "./reimbursements.html";
+            } else{
+                window.alert("Invalid request ID");
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>

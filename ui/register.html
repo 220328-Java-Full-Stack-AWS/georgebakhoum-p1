@@ -39,6 +39,7 @@
 
             <!-- onclick="submitForm()" hooks into our javascript, calling the funciton below -->
             <button id="contentBoxButton" onclick="submitForm()">Register</button>
+            <button onclick="window.location.href='./login.html'">Go to login page</button>
         </div>
 
 
@@ -69,12 +70,18 @@
 
             //Make our asynchronous API call
             let response = await registerRequest(newUser);
+            let json = await response.json();
 
             console.log("Response: ", response);//fact finding
             console.log("Response JSON: ", response.json());//we should delete these later
 
             if (response.status == 201) {
-                localStorage.setItem("username", newUser.username);
+                sessionStorage.setItem("email", json.email);
+                sessionStorage.setItem("role", json.role);
+                sessionStorage.setItem("username", json.username);
+                sessionStorage.setItem("firstname", json.firstName);
+                sessionStorage.setItem("lastname", json.lastName);
+                sessionStorage.setItem("userid", json.id);
 
                 //navigate the window to the landing page
                 window.location.href = "./pageUser.html";

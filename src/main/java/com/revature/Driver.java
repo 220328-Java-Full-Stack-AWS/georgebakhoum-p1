@@ -177,7 +177,7 @@ public class Driver {
                             scan.nextLine();
                             System.out.println();
 
-                            ReimbursementService.viewRequestsAdmin(choice);
+                            //ReimbursementService.viewRequestsAdmin(choice);
                             break;
                         case 2:
                             System.out.println("What is the ID of the reimbursement request you wish to make changes to?");

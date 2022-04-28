@@ -13,10 +13,12 @@
 
     <!-- This imports a script file, in this case it imports the exported scripts from that file -->
     <script src="./scripts/userConnection.js"></script>
+    <script src="./scripts/reimbursementConnection.js"></script>
+
     <script>
 
         //First we grab the authToken from localStorage where we left it at login/register
-        let authorizedUser = localStorage.getItem("username");
+        let authorizedUser = sessionStorage.getItem("username");
         console.log("authorizedUser: ", authorizedUser);//fact finding
 
         /*
@@ -30,7 +32,7 @@
             Now we make an API call to get our user data. The backend checks against the registered
             users for matching username, and returns the rest of the user object.
             */
-            let response = await getUser(localStorage.getItem("username"));
+            let response = await getUser(sessionStorage.getItem("username"));
             let json = await response.json();
             console.log("Response: ", response);//more fact finding
             console.log("Response JSON: ", json);//we should probably remove these later
@@ -47,64 +49,148 @@
                 + json.lastName + ", " + json.firstName
                 + "<br> username: " + json.username
                 + "<br> email: " + json.email
-                + "<br> unique user id:" + json.id
+                + "<br> unique user id: " + json.id;
+
+
+            let requests = await getReimbursementsUser(json.id);
+
+            if (requests.status == 200){
+                let rjs = await requests.json();
+                console.log("Response: ", requests);
+                console.log("Response JSON: ", rjs);
+
+                paragraph.innerHTML += "<br><br><br><br>";
+                for(let i = 0; i < rjs.length; i++){
+                    paragraph.innerHTML += "<b>Reimbursement Request ID: "
+                        + rjs[i].id + "</b><br>Status: "
+                        + rjs[i].status + "<br>Type: "
+                        +rjs[i].type + "<br>Description: "
+                        +rjs[i].description + "<br><br>";
+                }
+            }
         })(); //IIFE - Imediately Invoked Function Expression - self-invoking function.
+
+        
     </script>
 
     <button type="button" onclick="submitRequest()">Submit a request</button>
-    <button type="button" onclick="alert('Hello world!')">Cancel a request</button>
-    <button type="button" onclick="alert('Hello world!')">View your requests</button>
-    <button type="button" onclick="alert('Hello world!')">Edit a request</button>
+    <button type="button" onclick="cancelRequest()">Cancel a request</button>
+    <button type="button" onclick="editRequest()">Edit a request</button>
+    <button type="button" onclick="logout()">Log out</button>
 
 
-    <script src="./scripts/reimbursementConnection.js"></script>
+
     <script>
         async function submitRequest() {
-            let status = "Pending";
-            let type = prompt("Press 1 for lodging, 2 for food, 3 for travel");
+            let newStatus = "Pending";
+            let newType = prompt("Press 1 for lodging, 2 for food, 3 for travel");
 
-            if(type == 1){
-                type = "Lodging";
+            if(newType == 1){
+                newType = "Lodging";
             }
-            else if(type == 2){
-                type = "Food";
+            else if(newType == 2){
+                newType = "Food";
             }
-            else if(type == 3){
-                type = "Travel";
+            else if(newType == 3){
+                newType = "Travel";
             }
             
-            let description = prompt("Enter your description");
+            let newDesc = prompt("Enter your description");
 
-            let response = await getUser(localStorage.getItem("username"));
+            let response = await getUser(sessionStorage.getItem("username"));
             let json = await response.json();
             let id = json.id;
 
-
-            newReimbursement =  {
-                status: status,
-                type: type,
-                description: description,
+            newR = {
+                status: newStatus,
+                type: newType,
+                description: newDesc,
                 userID: id
             }
 
-            console.log(newReimbursement);
-            let r = await fetch(
-                "http://localhost:8080/Simpleservlets/Reimbursement",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "status": status,
-                        "type": type,
-                        "description": description,
-                        "userID": id
-                    },
-                body: JSON.stringify(newReimbursement)
-                }
-            );
+            console.log(newR);
+            let n = await newReimbursement(newR);
 
-            window.alert("test");
+            window.location.href = "./pageUser.html";
         }
+
+        async function cancelRequest() {
+            let cancelID = prompt("Enter ID of the request you wish to cancel");
+            let userID = sessionStorage.getItem("userid");
+
+            let del = {
+                user_id: userID,
+                req_id: cancelID
+            }
+
+            let d = await deleteReimbursement(del);
+
+            if(d.status == 412){
+                window.alert("Invalid request ID");
+            } else {
+                window.location.href = "./pageUser.html";
+            }
+        }
+
+        async function editRequest() {
+            let editID = prompt("Enter ID of the request you want to edit");
+            let user = sessionStorage.getItem("userid");
+
+            let info = {
+                req: editID,
+                user: user
+            }
+
+            let req = await getReimbursement(info);
+
+            if(req.status == 200){
+                let json = await req.json();
+                let eType = json.type;
+                let eDesc = json.description;
+                let eStatus = json.status;
+                
+                let choice = prompt("Press 1 to change type");
+                if(choice == 1){
+                    let newType = prompt("Press 1 for lodging, 2 for food, 3 for travel");
+
+                    if(newType == 1){
+                        eType = "Lodging";
+                    }
+                    else if(newType == 2){
+                        eType = "Food";
+                    }
+                    else if(newType == 3){
+                        eType = "Travel";
+                    } 
+                }
+
+                choice = prompt("Press 1 to change description");
+                if(choice == 1){
+                    eDesc = prompt("Enter the new description");
+                }
+
+                let e = {
+                    status: eStatus,
+                    type: eType,
+                    description: eDesc,
+                    userID: user,
+                    id: editID
+                }
+
+                let f = await updateReimbursement(e);
+                window.location.href = "./pageUser.html";
+
+            }
+            else {
+                window.alert("Invalid request ID");
+            }
+        }
+
+        async function logout(){
+            sessionStorage.clear();
+            window.location.href= "./login.html";
+        }
+
     </script>
 
 </body>

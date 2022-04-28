@@ -29,7 +29,6 @@ async function registerRequest(newUser) {
             headers: {
                 "Content-Type": "application/json",
                 "mode": "register",
-                "authToken": newUser.username
             },
             body: JSON.stringify(newUser)
         }
@@ -54,7 +53,6 @@ async function loginRequest(authDto) {
             headers: {
                 "Content-Type": "application/json",
                 "mode": "login",
-                "authToken": authDto.username
             },
             body: JSON.stringify(authDto)
         }
@@ -96,6 +94,20 @@ Read funciton. Sends a GET request with our username in the header.
 We expect the API to return the matching user resource representation,
 and we return that to the invoking code.
 */
+async function getAllUsers() {
+    let response = await fetch(
+        userResourceURL,
+        {
+            method: "GET",
+            headers: {
+                "mode":"allUsers"
+            }
+        }
+    );
+
+    return response;
+}
+
 async function getUser(un) {
     let response = await fetch(
         userResourceURL,
@@ -104,6 +116,21 @@ async function getUser(un) {
             headers: {
                 "username": un,
                 "mode":"getByUsername",
+            }
+        }
+    );
+
+    return response;
+}
+
+async function getUserByID(id) {
+    let response = await fetch(
+        userResourceURL,
+        {
+            method: "GET",
+            headers: {
+                "user_id": id,
+                "mode":"user_id"
             }
         }
     );

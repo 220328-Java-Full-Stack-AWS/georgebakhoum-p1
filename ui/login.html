@@ -26,6 +26,7 @@
         </div>
         <!-- onclick="submitForm()" hooks into our javascript, calling the funciton below -->
         <button onclick="submitForm()">Login</button>
+        <button onclick="window.location.href='./register.html'">Go to registration page</button>
     </div>
 
     <!-- This brings in all of the scripts in the source file. 
@@ -54,14 +55,20 @@
             console.log("Response JSON: ", response.json());//we should delete these later
 
             if (response.status == 200) {//status 200 - OK - indicates successful login
-                localStorage.setItem("username", authDto.username);
+                sessionStorage.setItem("email", json.email);
+                sessionStorage.setItem("role", json.role);
+                sessionStorage.setItem("username", json.username);
+                sessionStorage.setItem("firstname", json.firstName);
+                sessionStorage.setItem("lastname", json.lastName);
+                sessionStorage.setItem("userid", json.id);
 
 
                 if(json.role == "Admin"){
                     window.location.href = "./pageAdmin.html";
                 }
-                else{}
-                window.location.href = "./pageUser.html";
+                else{
+                    window.location.href = "./pageUser.html";
+                }
 
             } else {
                 alert("Unable to log in! Check username and password!");

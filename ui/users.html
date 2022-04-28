@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to ERS</title>
+</head>
+
+<body>
+    <p id="pageContent"><!-- Our inserted content will go here --></p>
+
+    <!-- This imports a script file, in this case it imports the exported scripts from that file -->
+    <script src="./scripts/userConnection.js"></script>
+    <script>
+
+        /*
+        This is a self-invoking function, also known as IIFE, imediately invoked 
+        function expression. To build one, wrap the function declaration in ()
+        then add another pair of () at the end to act as the parameter list. Effectively
+        as soon as the function is defined it is called.
+        */
+        (async function displayUsers() {
+            /*
+            Now we make an API call to get our user data. The backend checks against the registered
+            users for matching username, and returns the rest of the user object.
+            */
+            let response = await getAllUsers();
+
+            let paragraph = document.getElementById("pageContent");
+            paragraph.innerHTML += "<h1>Users</h1><br>";
+
+            if(response.status == 200){
+                let json = await response.json();
+                console.log("Response: ", response);//more fact finding
+                console.log("Response JSON: ", json);//we should probably remove these later
+
+                for(let i = 0; i < json.length; i++){
+                        paragraph.innerHTML += "<b>User ID: </b>"
+                            + json[i].id + "<br>First name: "
+                            + json[i].firstName + "<br>Last name: "
+                            + json[i].lastName + "<br> Username: "
+                            + json[i].username + "<br> Email: " + json[i].email
+                            + "<br> Role: " + json[i].role + "<br><br>";
+                    }
+            }
+            else {
+                paragraph.innerHTML += "No users to display<br>";
+            }
+        })(); //IIFE - Imediately Invoked Function Expression - self-invoking function.
+    </script>
+
+    <button type="button" onclick="updateUser()">Update user</button>
+    <button type="button" onclick="window.location.href='./pageAdmin.html'">Go back to previous page</button>
+
+    <script>
+        async function updateUser(){
+            let choice = prompt("Press 1 to change an employee to admin, press 2 to change an admin to employee");
+            let uID = prompt("Enter the ID of the user");
+
+            let u = await getUserByID(uID);
+            let js = await u.json();
+
+            if(choice == 1){
+                js.role = "Admin";
+            } else if(choice == 2){
+                js.role = "Employee";
+            }
+
+            await updateUserRequest(js);
+            
+            window.location.href = "./users.html";
+
+        }
+    </script>
+
+</body>
+
+</html>

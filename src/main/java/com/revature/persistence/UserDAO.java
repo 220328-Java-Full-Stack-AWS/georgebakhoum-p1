@@ -166,6 +166,7 @@ public class UserDAO implements CRUDInterface<User> {
                 u.setUsername(rs.getString("username"));
                 u.setPassword(rs.getString("password"));
                 u.setRole(rs.getString("role"));
+                u.setId(rs.getInt("user_id"));
                 list.add(u);
             }
             return list;

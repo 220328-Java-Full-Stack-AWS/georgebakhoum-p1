@@ -62,10 +62,16 @@ public class ReimbursementService {
         return list;
     }
 
-    public static List<Reimbursement> viewRequestsAdmin(int choice){
+    public static List<Reimbursement> viewRequestsAdmin(String status){
         List<Reimbursement> list = new ArrayList<>();
 
-        switch(choice){
+        if(status.equals("All")){
+            list = rd.getAll();
+        } else {
+            list = ReimbursementDAO.getByStatus(status);
+        }
+
+        /*switch(choice){
             case 1:
                 list = ReimbursementDAO.getByStatus("Pending");
                 break;
@@ -80,7 +86,7 @@ public class ReimbursementService {
                 break;
             default:
                 break;
-        }
+        }*/
 
         if(list.isEmpty()){
             System.out.println("There are no requests to display.");

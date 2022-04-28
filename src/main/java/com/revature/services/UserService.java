@@ -42,7 +42,19 @@ public class UserService {
 		}
 
 		u.setRole("Employee");
-		return ud.create(u);
+		u = ud.create(u);
+
+		rs = UserDAO.find(u.getUsername(), u.getEmail());
+
+		try {
+			rs.next();
+			u.setId(rs.getInt("user_id"));
+		}
+		catch (SQLException e){
+			e.printStackTrace();
+		}
+
+		return u;
 	}
 
 	public static void update(User u) {
