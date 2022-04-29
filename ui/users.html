@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <link rel="stylesheet" href="./style.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,42 +32,64 @@
             let paragraph = document.getElementById("pageContent");
             paragraph.innerHTML += "<h1>Users</h1><br>";
 
+            let body = document.getElementsByTagName("body")[0];
             if(response.status == 200){
+                body.innerHTML += "<table>"
+                    + "<tr><th>User ID</th>"
+                    + "<th>First Name</th>"
+                    + "<th>Last Name</th>"
+                    + "<th>Username</th>"
+                    + "<th>Email</th>"
+                    + "<th>Role</th></tr></table>";
+
                 let json = await response.json();
                 console.log("Response: ", response);//more fact finding
                 console.log("Response JSON: ", json);//we should probably remove these later
 
+                let table = document.getElementsByTagName("table")[0];
                 for(let i = 0; i < json.length; i++){
-                        paragraph.innerHTML += "<b>User ID: </b>"
-                            + json[i].id + "<br>First name: "
-                            + json[i].firstName + "<br>Last name: "
-                            + json[i].lastName + "<br> Username: "
-                            + json[i].username + "<br> Email: " + json[i].email
-                            + "<br> Role: " + json[i].role + "<br><br>";
+                    table.innerHTML += "<tr><td>"
+                        + json[i].id + "</td><td>"
+                        + json[i].firstName + "</td><td> "
+                        + json[i].lastName + "</td><td>"
+                        + json[i].username + "</td><td>"
+                        + json[i].email + "</td><td>"
+                        + json[i].role + "</td><td class ='btn'></td></tr>";
+
+                        let btn = document.getElementsByClassName("btn")[i];
+                        if(json[i].role == "Employee"){
+                            btn.innerHTML += "<button type=\"button\" onclick=\"updateUser('Admin', \'" + json[i].id + "\')\">Promote to admin</button>";
+                            
+                        }
+                        else if(json[i].username != sessionStorage.getItem("username")){
+                            btn.innerHTML += "<button type=\"button\" onclick=\"denyReq('Employee', \'" + json[i].id + "\')\">Demote to employee</button>";
+                        }
                     }
             }
             else {
                 paragraph.innerHTML += "No users to display<br>";
             }
+
+            body.innerHTML += "<br><button type=\"button\" onclick=\"window.location.href='./pageAdmin.html'\">Go back to previous page</button>"
+
         })(); //IIFE - Imediately Invoked Function Expression - self-invoking function.
     </script>
 
-    <button type="button" onclick="updateUser()">Update user</button>
-    <button type="button" onclick="window.location.href='./pageAdmin.html'">Go back to previous page</button>
-
     <script>
-        async function updateUser(){
-            let choice = prompt("Press 1 to change an employee to admin, press 2 to change an admin to employee");
-            let uID = prompt("Enter the ID of the user");
+        async function updateUser(role, id){
+            //let choice = prompt("Press 1 to change an employee to admin, press 2 to change an admin to employee");
+            //let uID = prompt("Enter the ID of the user");
 
-            let u = await getUserByID(uID);
+            let u = await getUserByID(id);
             let js = await u.json();
 
-            if(choice == 1){
+            /*if(choice == 1){
                 js.role = "Admin";
             } else if(choice == 2){
                 js.role = "Employee";
-            }
+            }*/
+
+            js.role = role;
 
             await updateUserRequest(js);
             

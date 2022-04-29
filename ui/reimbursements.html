@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <link rel="stylesheet" href="./style.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,6 +14,7 @@
 
     <!-- This imports a script file, in this case it imports the exported scripts from that file -->
     <script src="./scripts/reimbursementConnection.js"></script>
+    <script src="./scripts/userConnection.js"></script>
     <script>
 
         //First we grab the authToken from localStorage where we left it at login/register
@@ -30,59 +32,66 @@
             Now we make an API call to get our user data. The backend checks against the registered
             users for matching username, and returns the rest of the user object.
             */
-            let response = await getReimbursementStatus(filter);
+            
+            let body = document.getElementsByTagName("body")[0];
+            
+            body.innerHTML += "<table>"
+                + "<tr><th>User ID</th>"
+                + "<th>Full name</th>"
+                + "<th>Email</th>"
+                + "<th>Request ID</th>"
+                + "<th>Status</th>"
+                + "<th>Type</th>"
+                + "<th>Description</th></tr></table>";
 
-            let paragraph = document.getElementById("pageContent");
-            paragraph.innerHTML += "<h1>Reimbursement Requests</h1><br>";
+            
+            let requests = await getReimbursementStatus(filter);
 
-            if(response.status == 200){
-                let json = await response.json();
-                console.log("Response: ", response);//more fact finding
-                console.log("Response JSON: ", json);//we should probably remove these later
+            if (requests.status == 200){
+                let rjs = await requests.json();
+                console.log("Response: ", requests);
+                console.log("Response JSON: ", rjs);
 
-                for(let i = 0; i < json.length; i++){
-                        paragraph.innerHTML += "<b>Reimbursement Request ID: "
-                            + json[i].id + "</b><br>Status: "
-                            + json[i].status + "<br>Type: "
-                            + json[i].type + "<br>Description: "
-                            + json[i].description + "<br><br>";
-                    }
+                let table = document.getElementsByTagName("table")[0];
+                for(let i = 0; i < rjs.length; i++){
+                    let users = await getUserByID(rjs[i].userID);
+                    let ujs = await users.json();
+
+                    table.innerHTML += "<tr><td>"
+                        + ujs.id + "</td><td>"
+                        + ujs.firstName + " " + ujs.lastName + "</td><td>"
+                        + ujs.email + "</td><td>"
+                        + rjs[i].id + "</td><td>"
+                        + rjs[i].status + "</td><td>"
+                        + rjs[i].type + "</td><td>"
+                        + rjs[i].description + "</td><td class ='btn'></td></tr>";
+
+                        if(rjs[i].status == "Pending"){
+                            let btn = document.getElementsByClassName("btn")[i];
+                            btn.innerHTML += "<button type=\"button\" onclick=\"approveReq(\'" + rjs[i].id + "\')\">Approve</button>"
+                            + " <button type=\"button\" onclick=\"denyReq(\'" + rjs[i].id + "\')\">Deny</button>";
+                        }
+                }
             }
-            else {
-                paragraph.innerHTML += "No reimbursement requests to display<br>";
-            }
+
         })(); //IIFE - Imediately Invoked Function Expression - self-invoking function.
     </script>
 
-    <button type="button" onclick="changeFilter()">Change status filter</button>
-    <button type="button" onclick="approveReq()">Approve a request</button>
-    <button type="button" onclick="denyReq()">Deny a request</button>
+    <br>
+    <button type="button" onclick="changeFilter('All')">All requests</button>
+    <button type="button" onclick="changeFilter('Pending')">Pending requests</button>
+    <button type="button" onclick="changeFilter('Approved')">Approved requests</button>
+    <button type="button" onclick="changeFilter('Denied')">Denied requests</button>
     <button type="button" onclick="window.location.href='./pageAdmin.html'">Go back to previous page</button>
 
     <script>
-        async function changeFilter() {
-            let status = prompt("Press 1 to view pending requests, press 2 to view approved requests, press 3 to view denied requests, press 4 to view all");
-
-            if(status == 1){
-                status = "Pending";
-            }
-            else if(status == 2){
-                status = "Approved";
-            }
-            else if (status == 3){
-                status = "Denied";
-            } else {
-                status = "All";
-            }
-
+        async function changeFilter(status) {
             sessionStorage.setItem("reqfilter", status);
             window.location.href = "./reimbursements.html";
         }
 
-        async function approveReq() {
-            let reqid = prompt("Enter the request ID you want to approve");
-
-            let rep = await getReimbursementAdmin(reqid);
+        async function approveReq(id) {
+            let rep = await getReimbursementAdmin(id);
 
             if(rep.status == 200){
                 let json = await rep.json();
@@ -92,7 +101,7 @@
                         type: json.type,
                         description: json.description,
                         userID: json.userID,
-                        id: reqid
+                        id: id
                     }
                 
                 updateReimbursement(change);
@@ -102,10 +111,8 @@
             }
         }
 
-        async function denyReq() {
-            let reqid = prompt("Enter the request ID you want to deny");
-
-            let rep = await getReimbursementAdmin(reqid);
+        async function denyReq(id) {
+            let rep = await getReimbursementAdmin(id);
 
             if(rep.status == 200){
                 let json = await rep.json();
@@ -115,7 +122,7 @@
                         type: json.type,
                         description: json.description,
                         userID: json.userID,
-                        id: reqid
+                        id: id
                     }
                 
                 updateReimbursement(change);

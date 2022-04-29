@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <link rel="stylesheet" href="./style.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -52,31 +53,16 @@
         })(); //IIFE - Imediately Invoked Function Expression - self-invoking function.
     </script>
 
-    <button type="button" onclick="viewAllReqs()">View all reimbursement requests</button>
-    <button type="button" onclick="viewByStatus()">Filter requests by status</button>
-    <button type="button" onclick="window.location.href='./users.html'">View all users</button>
+    <button type="button" onclick="viewByStatus('All')">View all reimbursement requests</button><br>
+    <button type="button" onclick="viewByStatus('Pending')">View pending reimbursement requests</button><br>
+    <button type="button" onclick="viewByStatus('Approved')">View approved reimbursement requests</button><br>
+    <button type="button" onclick="viewByStatus('Denied')">View denied reimbursement requests</button><br>
+    <button type="button" onclick="window.location.href='./users.html'">View all users</button><br>
     <button type="button" onclick="logout()">Log out</button>
 
 
     <script>
-        async function viewAllReqs() {
-            sessionStorage.setItem("reqfilter", "All");
-            window.location.href = "./reimbursements.html";
-        }
-
-        async function viewByStatus(){
-            let status = prompt("Press 1 to view pending requests, press 2 to view approved requests, press 3 to view denied requests");
-
-            if(status == 1){
-                status = "Pending";
-            }
-            else if(status == 2){
-                status = "Approved";
-            }
-            else if (status == 3){
-                status = "Denied";
-            }
-
+        async function viewByStatus(status){
             sessionStorage.setItem("reqfilter", status);
             window.location.href = "./reimbursements.html";
         }

@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <link rel="stylesheet" href="./style.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -51,23 +52,15 @@
                 + "<br> email: " + json.email
                 + "<br> unique user id: " + json.id;
 
+            let body = document.getElementsByTagName("body")[0];
+            
+            body.innerHTML += "<table>"
+                + "<tr><th>Request ID</th>" 
+                + "<th>Status</th>"
+                + "<th>Type</th>"
+                + "<th>Description</th></tr></table>";
 
-            let requests = await getReimbursementsUser(json.id);
-
-            if (requests.status == 200){
-                let rjs = await requests.json();
-                console.log("Response: ", requests);
-                console.log("Response JSON: ", rjs);
-
-                paragraph.innerHTML += "<br><br><br><br>";
-                for(let i = 0; i < rjs.length; i++){
-                    paragraph.innerHTML += "<b>Reimbursement Request ID: "
-                        + rjs[i].id + "</b><br>Status: "
-                        + rjs[i].status + "<br>Type: "
-                        +rjs[i].type + "<br>Description: "
-                        +rjs[i].description + "<br><br>";
-                }
-            }
+            await displayInfo(json.id);
         })(); //IIFE - Imediately Invoked Function Expression - self-invoking function.
 
         
@@ -81,6 +74,35 @@
 
 
     <script>
+        async function displayInfo(id) {
+            let requests = await getReimbursementsUser(id);
+
+            if (requests.status == 200){
+                let rjs = await requests.json();
+                console.log("Response: ", requests);
+                console.log("Response JSON: ", rjs);
+
+                let table = document.getElementsByTagName("table")[0];
+                for(let i = 0; i < rjs.length; i++){
+                    table.innerHTML += "<tr><td>"
+                        + rjs[i].id + "</td><td>"
+                        + rjs[i].status + "</td><td>"
+                        + rjs[i].type + "</td><td>"
+                        + rjs[i].description + "</td><td class ='btn'></td></tr>";
+
+                        /*let btn = document.getElementsByClassName("btn")[i];
+                        if(rjs[i].status == "Pending"){
+                            btn.innerHTML += "<button type=\"button\" onclick=\"editRequest('Admin', \'" + json[i].id + "\')\">Promote to admin</button>"
+                            + "<button type=\"button\" onclick=\"cancelRequest('Admin', \'" + json[i].id + "\')\">Promote to admin</button>";
+                        }
+                        else {
+
+                        }*/
+                }
+            }
+        }
+
+
         async function submitRequest() {
             let newStatus = "Pending";
             let newType = prompt("Press 1 for lodging, 2 for food, 3 for travel");
@@ -108,7 +130,6 @@
                 userID: id
             }
 
-            console.log(newR);
             let n = await newReimbursement(newR);
 
             window.location.href = "./pageUser.html";
