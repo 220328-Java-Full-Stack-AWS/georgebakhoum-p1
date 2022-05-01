@@ -35,16 +35,11 @@ public class ReimbursementServlet extends HttpServlet {
                 resp.setStatus(200);
             }
         } else if (req.getHeader("mode").equals("id")){
-            if(service.find(Integer.parseInt(req.getHeader("user_id")), Integer.parseInt(req.getHeader("req_id")))) {
-                Reimbursement model = service.read(Integer.parseInt(req.getHeader("req_id")));
-                String json = rwjson.writeValueAsString(model);
-                resp.setContentType("application/json");
-                resp.getWriter().print(json);
-                resp.setStatus(200);
-            }
-            else{
-                resp.setStatus(412);
-            }
+            Reimbursement model = service.read(Integer.parseInt(req.getHeader("req_id")));
+            String json = rwjson.writeValueAsString(model);
+            resp.setContentType("application/json");
+            resp.getWriter().print(json);
+            resp.setStatus(200);
         } else if (req.getHeader("mode").equals("status")){
             List<Reimbursement> model = service.viewRequestsAdmin(req.getHeader("status"));
 
@@ -91,11 +86,7 @@ public class ReimbursementServlet extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if(service.find(Integer.parseInt(req.getHeader("user_id")), Integer.parseInt(req.getHeader("req_id")))) {
-            service.delete(Integer.parseInt(req.getHeader("req_id")));
-            resp.setStatus(200);
-        } else{
-            resp.setStatus(412);
-        }
+        service.delete(Integer.parseInt(req.getHeader("req_id")));
+        resp.setStatus(200);
     }
 }

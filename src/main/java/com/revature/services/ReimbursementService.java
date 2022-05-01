@@ -44,6 +44,7 @@ public class ReimbursementService {
         System.out.println("Reimbursement request ID: " + r.getId());
         System.out.println("Status: " + r.getStatus());
         System.out.println("Reimbursement type: " + r.getType());
+        System.out.println("Reimbursement amount: " + r.getAmount());
         System.out.println("Description: " + r.getDescription() + "\n");
         return r;
     }
@@ -63,30 +64,13 @@ public class ReimbursementService {
     }
 
     public static List<Reimbursement> viewRequestsAdmin(String status){
-        List<Reimbursement> list = new ArrayList<>();
+        List<Reimbursement> list;
 
         if(status.equals("All")){
             list = rd.getAll();
         } else {
             list = ReimbursementDAO.getByStatus(status);
         }
-
-        /*switch(choice){
-            case 1:
-                list = ReimbursementDAO.getByStatus("Pending");
-                break;
-            case 2:
-                list = ReimbursementDAO.getByStatus("Approved");
-                break;
-            case 3:
-                list = ReimbursementDAO.getByStatus("Denied");
-                break;
-            case 4:
-                list = rd.getAll();
-                break;
-            default:
-                break;
-        }*/
 
         if(list.isEmpty()){
             System.out.println("There are no requests to display.");
@@ -102,6 +86,7 @@ public class ReimbursementService {
             System.out.println("Reimbursement request ID: " + reimbursement.getId());
             System.out.println("Status: " + reimbursement.getStatus());
             System.out.println("Reimbursement type: " + reimbursement.getType());
+            System.out.println("Reimbursement amount: " + reimbursement.getAmount());
             System.out.println("Description: " + reimbursement.getDescription() + "\n");
         }
     }

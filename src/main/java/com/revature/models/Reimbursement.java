@@ -9,14 +9,16 @@ public class Reimbursement {
     private String status;
     private String description;
     private int userID;
+    private float amount;
 
     public Reimbursement() {}
 
-    public Reimbursement(String type, String status, String description, int userID) {
+    public Reimbursement(String type, String status, String description, int userID, float amount) {
         this.type = type;
         this.status = status;
         this.description = description;
         this.userID = userID;
+        this.amount = amount;
     }
 
     public String getType() {
@@ -59,4 +61,11 @@ public class Reimbursement {
         this.id = id;
     }
 
+    public float getAmount() {
+        return amount;
+    }
+
+    public void setAmount(float amount) {
+        this.amount = amount;
+    }
 }

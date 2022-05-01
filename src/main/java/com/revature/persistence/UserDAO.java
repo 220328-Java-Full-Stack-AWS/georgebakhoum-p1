@@ -151,7 +151,7 @@ public class UserDAO implements CRUDInterface<User> {
 
     @Override
     public List<User> getAll() {
-        String sql = "SELECT * FROM users";
+        String sql = "SELECT * FROM users ORDER BY user_id ASC";
 
         try {
             PreparedStatement pstmt = ConnectionFactory.getConnection().prepareStatement(sql);

@@ -31,8 +31,8 @@ public class ReimbursementDAO implements CRUDInterface<Reimbursement> {
 
     @Override
     public Reimbursement create(Reimbursement r) {
-        String sql = "INSERT INTO reimbursements (status, type, description, user_id) " +
-                "VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO reimbursements (status, type, description, user_id, amount) " +
+                "VALUES (?, ?, ?, ?, ?)";
 
         try {
             PreparedStatement pstmt = ConnectionFactory.getConnection().prepareStatement(sql);
@@ -40,6 +40,7 @@ public class ReimbursementDAO implements CRUDInterface<Reimbursement> {
             pstmt.setString(2, r.getType());
             pstmt.setString(3, r.getDescription());
             pstmt.setInt(4, r.getUserID());
+            pstmt.setFloat(5, r.getAmount());
             pstmt.executeUpdate();
             System.out.println("\nReimbursement request sent!");
         }
@@ -65,6 +66,7 @@ public class ReimbursementDAO implements CRUDInterface<Reimbursement> {
                 r.setStatus(rs.getString("status"));
                 r.setDescription(rs.getString("description"));
                 r.setUserID(rs.getInt("user_id"));
+                r.setAmount(rs.getFloat("amount"));
                 return r;
             }
         }
@@ -75,15 +77,15 @@ public class ReimbursementDAO implements CRUDInterface<Reimbursement> {
     }
 
     public void update(Reimbursement unprocessedReimbursement) {
-        String sql = "UPDATE reimbursements SET status = ?, type = ?, description = ? WHERE req_id = ? AND user_id = ?";
+        String sql = "UPDATE reimbursements SET status = ?, type = ?, description = ?, amount = ? WHERE req_id = ?";
 
         try{
             PreparedStatement pstmt = ConnectionFactory.getConnection().prepareStatement(sql);
             pstmt.setString(1, unprocessedReimbursement.getStatus());
             pstmt.setString(2, unprocessedReimbursement.getType());
             pstmt.setString(3, unprocessedReimbursement.getDescription());
-            pstmt.setInt(4, unprocessedReimbursement.getId());
-            pstmt.setInt(5, unprocessedReimbursement.getUserID());
+            pstmt.setFloat(4, unprocessedReimbursement.getAmount());
+            pstmt.setInt(5, unprocessedReimbursement.getId());
             pstmt.executeUpdate();
             System.out.println("Reimbursement request updated!\n");
         }
@@ -109,7 +111,7 @@ public class ReimbursementDAO implements CRUDInterface<Reimbursement> {
 
     @Override
     public List<Reimbursement> getAll() {
-        String sql = "SELECT * FROM reimbursements";
+        String sql = "SELECT * FROM reimbursements ORDER BY req_id ASC";
 
         try {
             PreparedStatement pstmt = ConnectionFactory.getConnection().prepareStatement(sql);
@@ -123,6 +125,7 @@ public class ReimbursementDAO implements CRUDInterface<Reimbursement> {
                 r.setStatus(rs.getString("status"));
                 r.setDescription(rs.getString("description"));
                 r.setUserID(rs.getInt("user_id"));
+                r.setAmount(rs.getFloat("amount"));
                 list.add(r);
             }
             return list;
@@ -135,7 +138,7 @@ public class ReimbursementDAO implements CRUDInterface<Reimbursement> {
     }
 
     public static List<Reimbursement> getByUserID(int id) {
-        String sql = "SELECT * FROM reimbursements WHERE user_id = ?";
+        String sql = "SELECT * FROM reimbursements WHERE user_id = ? ORDER BY req_id ASC";
 
         try {
             PreparedStatement pstmt = ConnectionFactory.getConnection().prepareStatement(sql);
@@ -150,6 +153,7 @@ public class ReimbursementDAO implements CRUDInterface<Reimbursement> {
                 r.setStatus(rs.getString("status"));
                 r.setDescription(rs.getString("description"));
                 r.setUserID(rs.getInt("user_id"));
+                r.setAmount(rs.getFloat("amount"));
                 list.add(r);
             }
             return list;
@@ -162,7 +166,7 @@ public class ReimbursementDAO implements CRUDInterface<Reimbursement> {
     }
 
     public static List<Reimbursement> getByStatus(String status) {
-        String sql = "SELECT * FROM reimbursements WHERE status = ?";
+        String sql = "SELECT * FROM reimbursements WHERE status = ? ORDER BY req_id ASC";
 
         try {
             PreparedStatement pstmt = ConnectionFactory.getConnection().prepareStatement(sql);
@@ -177,6 +181,7 @@ public class ReimbursementDAO implements CRUDInterface<Reimbursement> {
                 r.setStatus(rs.getString("status"));
                 r.setDescription(rs.getString("description"));
                 r.setUserID(rs.getInt("user_id"));
+                r.setAmount(rs.getFloat("amount"));
                 list.add(r);
             }
             return list;
