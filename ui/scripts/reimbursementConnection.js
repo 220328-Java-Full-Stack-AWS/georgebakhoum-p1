@@ -55,8 +55,7 @@ async function getReimbursement(id) {
             method: "GET",
             headers: {
                 "mode": "id",
-                "req_id": id.req,
-                "user_id": id.user
+                "req_id": id
             }
         }
     );
@@ -101,8 +100,7 @@ async function deleteReimbursement(reimbursement) {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                "req_id": reimbursement.req_id,
-                "user_id": reimbursement.user_id
+                "req_id": reimbursement
             },
             body: JSON.stringify(reimbursement)
         }

@@ -54,22 +54,37 @@
 
             let body = document.getElementsByTagName("body")[0];
             
-            body.innerHTML += "<table>"
+            body.innerHTML += "<br><table>"
                 + "<tr><th>Request ID</th>" 
                 + "<th>Status</th>"
                 + "<th>Type</th>"
+                + "<th>Amount</th>"
                 + "<th>Description</th></tr></table>";
 
             await displayInfo(json.id);
+
+            body.innerHTML += "<br><button type='button' onclick=\"logout()\">Log out</button><br><br>";
         })(); //IIFE - Imediately Invoked Function Expression - self-invoking function.
 
         
     </script>
 
-    <button type="button" onclick="submitRequest()">Submit a request</button>
-    <button type="button" onclick="cancelRequest()">Cancel a request</button>
-    <button type="button" onclick="editRequest()">Edit a request</button>
-    <button type="button" onclick="logout()">Log out</button>
+    <form onsubmit="submitRequest()" style="border: 1px solid; width: 200px; padding: 20px;">
+        <p>Submit a new request</p>
+        <label for="type">Type: </label>
+        <select name="type" id="type" required>
+            <option value="Lodging">Lodging</option>
+            <option value="Food">Food</option>
+            <option value="Travel">Travel</option>
+        </select><br><br>
+
+        <label for="amount">Amount:</label>
+        <input type="number" id="amount" name="amount" step="0.01" min="0" max="9999.99" required><br><br>
+
+        <label for="desc">Description:</label><br>
+        <input type="text" id="desc" name="desc" required><br><br>
+        <input type="submit" value="Submit"><br><br>
+      </form> 
 
 
 
@@ -88,123 +103,81 @@
                         + rjs[i].id + "</td><td>"
                         + rjs[i].status + "</td><td>"
                         + rjs[i].type + "</td><td>"
+                        + rjs[i].amount + "</td><td>"
                         + rjs[i].description + "</td><td class ='btn'></td></tr>";
 
-                        /*let btn = document.getElementsByClassName("btn")[i];
+                        let btn = document.getElementsByClassName("btn")[i];
                         if(rjs[i].status == "Pending"){
-                            btn.innerHTML += "<button type=\"button\" onclick=\"editRequest('Admin', \'" + json[i].id + "\')\">Promote to admin</button>"
-                            + "<button type=\"button\" onclick=\"cancelRequest('Admin', \'" + json[i].id + "\')\">Promote to admin</button>";
+                            btn.innerHTML += "<button type=\"button\" onclick=\"editRequest(\'" + rjs[i].id + "\', \'" + rjs[i].status + "\', \'" + rjs[i].type + "\', \'" + rjs[i].amount + "\', \'" + rjs[i].description + "\')\">Edit request</button>"
+                            + " <button type=\"button\" onclick=\"cancelRequest(\'" + rjs[i].id + "\')\">Cancel request</button>";
                         }
-                        else {
-
-                        }*/
                 }
             }
         }
 
 
         async function submitRequest() {
-            let newStatus = "Pending";
-            let newType = prompt("Press 1 for lodging, 2 for food, 3 for travel");
 
-            if(newType == 1){
-                newType = "Lodging";
-            }
-            else if(newType == 2){
-                newType = "Food";
-            }
-            else if(newType == 3){
-                newType = "Travel";
-            }
-            
-            let newDesc = prompt("Enter your description");
-
-            let response = await getUser(sessionStorage.getItem("username"));
-            let json = await response.json();
-            let id = json.id;
+            let newType = document.getElementById("type").value;
+            let newDesc = document.getElementById("desc").value;
+            let newAmount = document.getElementById("amount").value;
 
             newR = {
-                status: newStatus,
+                status: "Pending",
                 type: newType,
+                amount: newAmount,
                 description: newDesc,
-                userID: id
+                userID: sessionStorage.getItem("userid")
             }
 
-            let n = await newReimbursement(newR);
-
+            await newReimbursement(newR);
             window.location.href = "./pageUser.html";
         }
 
-        async function cancelRequest() {
-            let cancelID = prompt("Enter ID of the request you wish to cancel");
-            let userID = sessionStorage.getItem("userid");
-
-            let del = {
-                user_id: userID,
-                req_id: cancelID
-            }
-
-            let d = await deleteReimbursement(del);
-
-            if(d.status == 412){
-                window.alert("Invalid request ID");
-            } else {
+        async function cancelRequest(id) {
+            if(window.confirm("Are you sure you want to delete request " + id + "?")){
+                await deleteReimbursement(id);
                 window.location.href = "./pageUser.html";
             }
         }
 
-        async function editRequest() {
-            let editID = prompt("Enter ID of the request you want to edit");
-            let user = sessionStorage.getItem("userid");
+        async function editRequest(id, status, type, amount, desc) {
 
-            let info = {
-                req: editID,
-                user: user
-            }
+                let eType = type;
+                let eDesc = desc;
+                let eAmount = amount;
 
-            let req = await getReimbursement(info);
-
-            if(req.status == 200){
-                let json = await req.json();
-                let eType = json.type;
-                let eDesc = json.description;
-                let eStatus = json.status;
+                if(window.confirm("Change amount?")){
+                    eAmount = parseFloat(prompt("Enter the new desired amount"));
+                }
                 
-                let choice = prompt("Press 1 to change type");
-                if(choice == 1){
-                    let newType = prompt("Press 1 for lodging, 2 for food, 3 for travel");
+                if(window.confirm("Change type? (Options: lodging, food, travel)")){
 
-                    if(newType == 1){
+                    if(window.confirm("Change type to lodging?")){
                         eType = "Lodging";
                     }
-                    else if(newType == 2){
+                    else if(window.confirm("Change type to food?")){
                         eType = "Food";
                     }
-                    else if(newType == 3){
+                    else if(window.confirm("Change type to travel?")){
                         eType = "Travel";
                     } 
                 }
-
-                choice = prompt("Press 1 to change description");
-                if(choice == 1){
+                
+                if(window.confirm("Change description?")){
                     eDesc = prompt("Enter the new description");
                 }
 
                 let e = {
-                    status: eStatus,
+                    status: status,
                     type: eType,
+                    amount: eAmount,
                     description: eDesc,
-                    userID: user,
-                    id: editID
+                    id: id
                 }
 
-                let f = await updateReimbursement(e);
+                await updateReimbursement(e);
                 window.location.href = "./pageUser.html";
-
-            }
-            else {
-                window.alert("Invalid request ID");
-            }
         }
 
         async function logout(){

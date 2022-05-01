@@ -42,9 +42,9 @@
                 + "<th>Request ID</th>"
                 + "<th>Status</th>"
                 + "<th>Type</th>"
+                + "<th>Amount</th>"
                 + "<th>Description</th></tr></table>";
 
-            
             let requests = await getReimbursementStatus(filter);
 
             if (requests.status == 200){
@@ -64,6 +64,7 @@
                         + rjs[i].id + "</td><td>"
                         + rjs[i].status + "</td><td>"
                         + rjs[i].type + "</td><td>"
+                        + rjs[i].amount + "</td><td>"
                         + rjs[i].description + "</td><td class ='btn'></td></tr>";
 
                         if(rjs[i].status == "Pending"){
@@ -100,6 +101,7 @@
                         status: "Approved",
                         type: json.type,
                         description: json.description,
+                        amount: json.amount,
                         userID: json.userID,
                         id: id
                     }
@@ -121,6 +123,7 @@
                         status: "Denied",
                         type: json.type,
                         description: json.description,
+                        amount: json.amount,
                         userID: json.userID,
                         id: id
                     }

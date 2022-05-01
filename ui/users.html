@@ -62,7 +62,7 @@
                             
                         }
                         else if(json[i].username != sessionStorage.getItem("username")){
-                            btn.innerHTML += "<button type=\"button\" onclick=\"denyReq('Employee', \'" + json[i].id + "\')\">Demote to employee</button>";
+                            btn.innerHTML += "<button type=\"button\" onclick=\"updateUser('Employee', \'" + json[i].id + "\')\">Demote to employee</button>";
                         }
                     }
             }
