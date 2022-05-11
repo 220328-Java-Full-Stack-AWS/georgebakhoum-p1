@@ -21,10 +21,10 @@ The Expense Reimbursement System (ERS) manages the process of reimbursing employ
     - Login into your account as a guest
     - Create a new account as a guest
  - User
-  - Submit a reimbursement request as a user
-  - Cancel a reimbursement request as a user
-  - Edit currently pending reimbursments as a user
-  - View all of your pending and completed reimbursement requests as a user
+   - Submit a reimbursement request as a user
+   - Cancel a reimbursement request as a user
+   - Edit currently pending reimbursments as a user
+   - View all of your pending and completed reimbursement requests as a user
  - Admin
   - View all users' reimbursement requests as an admin
   - Approve or deny any pending reimbursement requests as an admin
