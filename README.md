@@ -16,6 +16,31 @@ The Expense Reimbursement System (ERS) manages the process of reimbursing employ
  - JavaScript
  - AJAX / Fetch API
 
+# Features
+ - Guest
+  - Login into your account as a guest
+  - Create a new account as a guest
+ - User
+  - Submit a reimbursement request as a user
+  - Cancel a reimbursement request as a user
+  - Edit currently pending reimbursments as a user
+  - View all of your pending and completed reimbursement requests as a user
+ - Admin
+  - View all users' reimbursement requests as an admin
+  - Approve or deny any pending reimbursement requests as an admin
+  - Filter reimbursement requests by status
+  - Change a user's role between admin or employee as an admin
+
+# Getting Started
+
+# Usage
+
+
+# Contributors
+ - George Bakhoum
+
+# License
+
 # Functional Requirements
  - Domain objects persisted in relational database
  - Database should be in 3NF
@@ -27,26 +52,6 @@ The Expense Reimbursement System (ERS) manages the process of reimbursing employ
  - Unit test coverage for service-layer classes
 
 The persistence-layer system shall use JDBC to connect to a Postgres database. The API-layer shall utilize Java servlets to expose a public interface. The front-end view shall use HTML/CSS/JavaScript to make an application that can call server-side components in a generally RESTful manner. The middle tier shall follow proper layered architecture, and have reasonable JUnit test coverage of the service layer. Webpages shall be styled to be functional and readable. 
-
-# User Stories
-### Requirements:
-#### Guest:
- - As a guest, I can register for a new account
- - As a guest, I can log into my account
-
-#### User:
- - As a user, I can submit a request for reimbursement
- - As a user, I can cancel a pending request for reimbursement
- - As a user, I can view my pending and completed past requests for reimbursement
- - As a user, I can edit my pending requests for reimbursement
-
-#### Admin/Finance Manager:
- - As an admin, I can approve expense reimbursements
- - As an admin, I can deny expense reimbursements
- - As an admin, I can filter requests by status
-
-#### Stretch Goals:
- - As an admin, I can change a user's role between admin and user
 
 # UI Help
 Due to the schedule of our curriculum, we won't begin discussing JavaScript until the week of the presentation. Your trainer will be providing drop-in JavaScript code you can use to connect your HTML/CSS front-end to your Java backend. You may need to adjust what is provided to fit into your application. Expect this no later than Monday 4/18/2022.
