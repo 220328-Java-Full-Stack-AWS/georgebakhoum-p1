@@ -35,11 +35,8 @@ The Expense Reimbursement System (ERS) manages the process of reimbursing employ
 
 # Usage
 
-
 # Contributors
  - George Bakhoum
-
-# License
 
 # Functional Requirements
  - Domain objects persisted in relational database
