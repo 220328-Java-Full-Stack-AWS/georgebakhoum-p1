@@ -32,6 +32,7 @@ The Expense Reimbursement System (ERS) manages the process of reimbursing employ
    - Change a user's role between admin or employee
 
 # Getting Started
+```git clone https://github.com/220328-Java-Full-Stack-AWS/georgebakhoum-p1.git```
 
 # Usage
 
