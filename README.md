@@ -18,8 +18,8 @@ The Expense Reimbursement System (ERS) manages the process of reimbursing employ
 
 # Features
  - Guest
-  - Login into your account as a guest
-  - Create a new account as a guest
+    - Login into your account as a guest
+    - Create a new account as a guest
  - User
   - Submit a reimbursement request as a user
   - Cancel a reimbursement request as a user
